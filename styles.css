@@ -1,0 +1,55 @@
+/* css styles */
+
+https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/
+
+@font-face {
+    font-family: "et-book";
+    src: url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot");
+    src: url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-roman-line-figures/et-book-roman-line-figures.eot?#iefix") format("embedded-opentype"), url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-roman-line-figures/et-book-roman-line-figures.woff") format("woff"), url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-roman-line-figures/et-book-roman-line-figures.ttf") format("truetype"), url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-roman-line-figures/et-book-roman-line-figures.svg#etbookromanosf") format("svg");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "et-book";
+    src: url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot");
+    src: url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.eot?#iefix") format("embedded-opentype"), url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.woff") format("woff"), url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.ttf") format("truetype"), url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-display-italic-old-style-figures/et-book-display-italic-old-style-figures.svg#etbookromanosf") format("svg");
+    font-weight: normal;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "et-book";
+    src: url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot");
+    src: url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-bold-line-figures/et-book-bold-line-figures.eot?#iefix") format("embedded-opentype"), url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-bold-line-figures/et-book-bold-line-figures.woff") format("woff"), url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-bold-line-figures/et-book-bold-line-figures.ttf") format("truetype"), url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-bold-line-figures/et-book-bold-line-figures.svg#etbookromanosf") format("svg");
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "et-book-roman-old-style";
+    src: url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot");
+    src: url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.eot?#iefix") format("embedded-opentype"), url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.woff") format("woff"), url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.ttf") format("truetype"), url("https://raw.githubusercontent.com/urbangrammarai/urbangrammarai.github.io/master/src/_static/et-book/et-book-roman-old-style-figures/et-book-roman-old-style-figures.svg#etbookromanosf") format("svg");
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+p {
+    font-family: 'et-book', serif;
+    font-size: 20px;
+}
+.navbar-dark, .navbar-light, .navbar {
+  background-color: #8FA37E;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #3B6E8D;
+}
+
+a, p a code {
+    color: #BD5B4F;
+}

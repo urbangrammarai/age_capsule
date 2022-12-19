@@ -1,0 +1,25 @@
+project:
+  type: website
+  preview:
+    port: 5411
+    host: 0.0.0.0
+    browser: false
+
+website:
+  title: "mysite"
+  navbar:
+    background: primary
+    left:
+      - href: index.qmd
+        text: Home
+      - about.qmd
+      - uprn_age_signatures.ipynb
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+
+
+
