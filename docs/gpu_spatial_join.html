@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.426">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>EPC Capsule – gpu_spatial_join</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link id="quarto-text-highlighting-styles" href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">EPC Capsule</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html">Narrative</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./data_acquisition.html">Data acquisition</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./gpu_spatial_join.html" aria-current="page">Spatial Join</a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#spatial-join" id="toc-spatial-join" class="nav-link active" data-scroll-target="#spatial-join">Spatial Join</a>
+  <ul class="collapse">
+  <li><a href="#check-gpu-based-spatial-join-validity" id="toc-check-gpu-based-spatial-join-validity" class="nav-link" data-scroll-target="#check-gpu-based-spatial-join-validity">Check GPU-based spatial join validity</a></li>
+  <li><a href="#join-uprns-to-spatial-signatures-on-a-gpu" id="toc-join-uprns-to-spatial-signatures-on-a-gpu" class="nav-link" data-scroll-target="#join-uprns-to-spatial-signatures-on-a-gpu">Join UPRNs to Spatial Signatures on a GPU</a></li>
+  <li><a href="#method-documentation" id="toc-method-documentation" class="nav-link" data-scroll-target="#method-documentation">Method documentation</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+
+
+<section id="spatial-join" class="level1 page-columns page-full">
+<h1>Spatial Join</h1>
+<p>We run this on the latest official RAPIDS container (on a NVIDIA GPU accelerated machine), which we can launch with:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--gpus</span> all <span class="at">--rm</span> <span class="at">-it</span> <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">-p</span> 8889:8888 <span class="at">-p</span> 8788:8787 <span class="at">-p</span> 8786:8786 <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">-v</span> /media/dani/DataStore/data/:/rapids/notebooks/data <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">-v</span> <span class="va">${PWD}</span>:/rapids/notebooks/work <span class="dt">\</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    rapidsai/rapidsai:cuda11.4-runtime-ubuntu20.04-py3.9</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>With this setup, we can access the same <code>work</code> and <code>data</code> folders as in the <a href="./data_acquisition.html">previous notebook</a>.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cuspatial</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tools <span class="im">import</span> sjoin_gpu</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> ceil</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>uprn_p <span class="op">=</span> <span class="st">'/rapids/notebooks/data/tmp/epc_uprn.pq'</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>ss_p <span class="op">=</span> <span class="st">'/rapids/notebooks/data/tmp/sss.pq'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="check-gpu-based-spatial-join-validity" class="level2">
+<h2 class="anchored" data-anchor-id="check-gpu-based-spatial-join-validity">Check GPU-based spatial join validity</h2>
+<p>Before we run the spatial join on the whole dataset, and since <code>cuspatial</code> is a relatively new library compared to <code>geopandas</code>, we perform a check on a small sample to confirm the results from the spatial join are the same.</p>
+<p>We will read into RAM the first 1,600 EPC properties (<code>uprn</code>) and joined them to the spatial signature polygons (<code>ss</code>):</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>uprn <span class="op">=</span> geopandas.read_parquet(uprn_p).head(<span class="dv">1600</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>ss <span class="op">=</span> geopandas.read_parquet(ss_p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 24.5 s, sys: 7.68 s, total: 32.2 s
+Wall time: 27.8 s</code></pre>
+</div>
+</div>
+<p>Then we move them to the GPU:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>uprn_gpu <span class="op">=</span> cuspatial.from_geopandas(uprn)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>ss_gpu <span class="op">=</span> cuspatial.from_geopandas(ss)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 7.78 s, sys: 675 ms, total: 8.45 s
+Wall time: 8.39 s</code></pre>
+</div>
+</div>
+<p>And perform the GPU-backed spatial join:</p>
+<div class="cell" data-tags="[]" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>time tst_gpu <span class="op">=</span> sjoin_gpu(uprn_gpu, ss_gpu)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/opt/conda/envs/rapids/lib/python3.9/site-packages/cuspatial/core/spatial/indexing.py:193: UserWarning: scale 5 is less than required minimum scale 9345.561538461538. Clamping to minimum scale
+  warnings.warn(
+/opt/conda/envs/rapids/lib/python3.9/site-packages/cuspatial/core/spatial/join.py:171: UserWarning: scale 5 is less than required minimum scale 9345.561538461538. Clamping to minimum scale
+  warnings.warn(</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 649 ms, sys: 40.1 ms, total: 689 ms
+Wall time: 686 ms</code></pre>
+</div>
+</div>
+<p>And the same with <code>geopandas</code>:</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>tst <span class="op">=</span> geopandas.sjoin(uprn, ss, how<span class="op">=</span><span class="st">'left'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 1.78 s, sys: 757 µs, total: 1.78 s
+Wall time: 1.78 s</code></pre>
+</div>
+</div>
+<p>We can see computation time is much shorter on the GPU (this gap actually grows notably when the number of points grows, to obtain at least a 20x performance boost). To compare the two results, we join them into a single table:</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>check <span class="op">=</span> tst.join(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    tst_gpu.to_pandas().set_index(<span class="st">'LMK_KEY'</span>), </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">'LMK_KEY'</span>, </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    rsuffix<span class="op">=</span><span class="st">'_gpu'</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>And check that the unique identifier of each EPC property (<code>id</code> and <code>id_gpu</code>) are the same:</p>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>(check[<span class="st">'id'</span>] <span class="op">!=</span> check[<span class="st">'id_gpu'</span>]).<span class="bu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="13">
+<pre><code>1</code></pre>
+</div>
+</div>
+<p>The only instance in this sample that differs actually doesn’t differ but it is a point that is not joined to any polygon and hence has <code>NaN</code> values:</p>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>check[check.<span class="bu">eval</span>(<span class="st">'id != id_gpu'</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="14">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>LMK_KEY</th>
+      <th>CONSTRUCTION_AGE_BAND</th>
+      <th>UPRN</th>
+      <th>geometry</th>
+      <th>index_right</th>
+      <th>id</th>
+      <th>code</th>
+      <th>type</th>
+      <th>point_index</th>
+      <th>UPRN_gpu</th>
+      <th>CONSTRUCTION_AGE_BAND_gpu</th>
+      <th>id_gpu</th>
+      <th>type_gpu</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>559</th>
+      <td>887304392732013022216585817278109</td>
+      <td>England and Wales: 2007 onwards</td>
+      <td>10090070569</td>
+      <td>POINT (452546.000 533673.000)</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>With this, we confirm we can use the GPU-backed spatial join, and proceed to deployment to the entire dataset.</p>
+</section>
+<section id="join-uprns-to-spatial-signatures-on-a-gpu" class="level2">
+<h2 class="anchored" data-anchor-id="join-uprns-to-spatial-signatures-on-a-gpu">Join UPRNs to Spatial Signatures on a GPU</h2>
+<p>We read in RAM the two tables without subsetting this time:</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>uprn <span class="op">=</span> geopandas.read_parquet(uprn_p)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>ss <span class="op">=</span> geopandas.read_parquet(ss_p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 24.7 s, sys: 7.48 s, total: 32.1 s
+Wall time: 28 s</code></pre>
+</div>
+</div>
+<p>Then we move them to the GPU:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>uprn_gpu <span class="op">=</span> cuspatial.from_geopandas(uprn)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>ss_gpu <span class="op">=</span> cuspatial.from_geopandas(ss)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 3min 46s, sys: 6.65 s, total: 3min 52s
+Wall time: 3min 49s</code></pre>
+</div>
+</div>
+<p>And we are ready to perform the GPU-backed spatial join. Because the GPU on which this is being run only has 8GB or memory, we need to chunk the computation. We will do this by joining <code>chunk_size</code> points at a time and storing the results back on RAM. Once finished, we save the resulting table to disk.</p>
+<p>We can set this up with a simple <code>for</code> loop:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>out <span class="op">=</span> []</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>chunk_size <span class="op">=</span> <span class="dv">500000</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> tqdm(<span class="bu">range</span>(ceil(<span class="bu">len</span>(uprn_gpu) <span class="op">/</span> chunk_size))):</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    chunk <span class="op">=</span> uprn_gpu.iloc[i<span class="op">*</span>(chunk_size<span class="op">-</span><span class="dv">1</span>): i<span class="op">*</span>(chunk_size<span class="op">-</span><span class="dv">1</span>)<span class="op">+</span>chunk_size, :]</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    sjoined <span class="op">=</span> sjoin_gpu(chunk, ss_gpu, scale<span class="op">=</span><span class="dv">10000</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    out.append(sjoined.to_pandas())</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>out <span class="op">=</span> pandas.concat(out)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>out.to_parquet(<span class="st">'/rapids/notebooks/data/tmp/epc_uprn_ss.pq'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  9%|▊         | 4/46 [01:16&lt;13:06, 18.73s/it]</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> du <span class="op">-</span>h <span class="op">/</span>rapids<span class="op">/</span>notebooks<span class="op">/</span>data<span class="op">/</span>tmp<span class="op">/</span>epc_uprn<span class="op">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="method-documentation" class="level2 page-columns page-full">
+<h2 class="anchored" data-anchor-id="method-documentation">Method documentation</h2>
+<p>Since the method used to perform the spatial join (<code>sjoin_gpu</code>) was written for this project, it might be helpful to print here its documentation:</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p>You can download the file with the function <a href="tools.py">here</a>.</p>
+</div></div><div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>sjoin_gpu?</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>[0;31mSignature:[0m
+[0msjoin_gpu[0m[0;34m([0m[0;34m[0m
+[0;34m[0m    [0mpts_gdf[0m[0;34m,[0m[0;34m[0m
+[0;34m[0m    [0mpoly_gdf[0m[0;34m,[0m[0;34m[0m
+[0;34m[0m    [0mscale[0m[0;34m=[0m[0;36m5[0m[0;34m,[0m[0;34m[0m
+[0;34m[0m    [0mmax_depth[0m[0;34m=[0m[0;36m7[0m[0;34m,[0m[0;34m[0m
+[0;34m[0m    [0mmax_size[0m[0;34m=[0m[0;36m125[0m[0;34m,[0m[0;34m[0m
+[0;34m[0m    [0mpts_cols[0m[0;34m=[0m[0;34m[[0m[0;34m'LMK_KEY'[0m[0;34m,[0m [0;34m'UPRN'[0m[0;34m,[0m [0;34m'CONSTRUCTION_AGE_BAND'[0m[0;34m][0m[0;34m,[0m[0;34m[0m
+[0;34m[0m    [0mpoly_cols[0m[0;34m=[0m[0;34m[[0m[0;34m'id'[0m[0;34m,[0m [0;34m'type'[0m[0;34m][0m[0;34m,[0m[0;34m[0m
+[0;34m[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0;31mDocstring:[0m
+Spatial Join on a GPU
+...
+
+Adapted from:
+
+&gt; https://docs.rapids.ai/api/cuspatial/stable/user_guide/users.html#cuspatial.quadtree_point_in_polygon
+
+Arguments
+---------
+pts_gdf : geopandas.GeoDataFrame/cuspatial.GeoDataFrame
+          Table with points
+poly_gdf : geopandas.GeoDataFrame/cuspatial.GeoDataFrame
+           Table with polygons
+scale : int
+        [From `cuspatial` docs. Default=5] A scaling function that increases the size of the point 
+        space from an origin defined by `{x_min, y_min}`. This can increase the likelihood of 
+        generating well-separated quads.
+        
+max_depth : int
+            [From `cuspatial` docs. Default=7] In order for a quadtree to index points effectively, 
+            it must have a depth that is log-scaled with the size of the number of points. Each level 
+            of the quad tree contains 4 quads. The number of available quads $q$
+            for indexing is then equal to $q = 4^d$ where $d$ is the max_depth parameter. With an input 
+            size of 10m points and `max_depth` = 7, points will be most efficiently packed into the leaves
+            of the quad tree.
+max_size : int
+           [From `cuspatial` docs. Default=125] Maximum number of points allowed in a node before it's 
+           split into 4 leaf nodes. 
+pts_cols : list
+           [Optional. Default=['UPRN', 'CONSTRUCTION_AGE_BAND']] Column names in `pts_gdf` to be 
+           joined in the output
+poly_cols : list
+            [Optional. Default=['id', 'type']] Column names in `poly_gdf` to be joined in the output 
+
+Returns
+-------
+sjoined : cudf.DataFrame
+          Table with `pts_cols` and `poly_cols` spatially joined
+[0;31mFile:[0m      /rapids/notebooks/work/tools.py
+[0;31mType:[0m      function</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

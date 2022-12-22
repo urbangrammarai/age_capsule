@@ -1,25 +1,27 @@
 project:
   type: website
+  output-dir: docs
   preview:
-    port: 5411
+    port: 4000
     host: 0.0.0.0
     browser: false
+    
+bibliography: references.bib
 
 website:
-  title: "mysite"
+  title: "EPC Capsule"
   navbar:
     background: primary
     left:
       - href: index.qmd
-        text: Home
-      - about.qmd
-      - uprn_age_signatures.ipynb
+        text: Narrative
+      - data_acquisition.ipynb
+      - gpu_spatial_join.ipynb
 
 format:
   html:
-    theme: cosmo
+    theme: journal
     css: styles.css
     toc: true
-
 
 
