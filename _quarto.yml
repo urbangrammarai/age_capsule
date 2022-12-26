@@ -17,6 +17,10 @@ website:
         text: Narrative
       - data_acquisition.ipynb
       - gpu_spatial_join.ipynb
+      - href: analysis.ipynb
+        text: Analysis
+      - href: about.qmd
+        text: About
 
 format:
   html:

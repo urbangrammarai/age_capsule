@@ -146,6 +146,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li class="nav-item">
     <a class="nav-link active" href="./gpu_spatial_join.html" aria-current="page">Spatial Join</a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./analysis.html">Analysis</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html">About</a>
+  </li>  
 </ul>
               <div id="quarto-search" class="" title="Search"></div>
           </div> <!-- /navcollapse -->
@@ -165,6 +171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul class="collapse">
   <li><a href="#check-gpu-based-spatial-join-validity" id="toc-check-gpu-based-spatial-join-validity" class="nav-link" data-scroll-target="#check-gpu-based-spatial-join-validity">Check GPU-based spatial join validity</a></li>
   <li><a href="#join-uprns-to-spatial-signatures-on-a-gpu" id="toc-join-uprns-to-spatial-signatures-on-a-gpu" class="nav-link" data-scroll-target="#join-uprns-to-spatial-signatures-on-a-gpu">Join UPRNs to Spatial Signatures on a GPU</a></li>
+  <li><a href="#join-postcode-centroids-to-spatial-signatures-to-land-registry" id="toc-join-postcode-centroids-to-spatial-signatures-to-land-registry" class="nav-link" data-scroll-target="#join-postcode-centroids-to-spatial-signatures-to-land-registry">Join Postcode centroids to Spatial Signatures to Land Registry</a></li>
   <li><a href="#method-documentation" id="toc-method-documentation" class="nav-link" data-scroll-target="#method-documentation">Method documentation</a></li>
   </ul></li>
   </ul>
@@ -193,7 +200,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> math <span class="im">import</span> ceil</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>uprn_p <span class="op">=</span> <span class="st">'/rapids/notebooks/data/tmp/epc_uprn.pq'</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>ss_p <span class="op">=</span> <span class="st">'/rapids/notebooks/data/tmp/sss.pq'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>ss_p <span class="op">=</span> <span class="st">'/rapids/notebooks/data/tmp/sss.pq'</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>pc_p <span class="op">=</span> <span class="st">'/rapids/notebooks/data/tmp/postcode_pts.pq'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="check-gpu-based-spatial-join-validity" class="level2">
 <h2 class="anchored" data-anchor-id="check-gpu-based-spatial-join-validity">Check GPU-based spatial join validity</h2>
@@ -204,8 +212,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>uprn <span class="op">=</span> geopandas.read_parquet(uprn_p).head(<span class="dv">1600</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>ss <span class="op">=</span> geopandas.read_parquet(ss_p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>CPU times: user 24.5 s, sys: 7.68 s, total: 32.2 s
-Wall time: 27.8 s</code></pre>
+<pre><code>CPU times: user 26.2 s, sys: 7.71 s, total: 34 s
+Wall time: 29.5 s</code></pre>
 </div>
 </div>
 <p>Then we move them to the GPU:</p>
@@ -341,11 +349,64 @@ Wall time: 3min 49s</code></pre>
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>out <span class="op">=</span> pandas.concat(out)</span>
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>out.to_parquet(<span class="st">'/rapids/notebooks/data/tmp/epc_uprn_ss.pq'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>  9%|▊         | 4/46 [01:16&lt;13:06, 18.73s/it]</code></pre>
+<pre><code> 37%|███▋      | 17/46 [06:55&lt;13:08, 27.19s/it]</code></pre>
 </div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> du <span class="op">-</span>h <span class="op">/</span>rapids<span class="op">/</span>notebooks<span class="op">/</span>data<span class="op">/</span>tmp<span class="op">/</span>epc_uprn<span class="op">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="join-postcode-centroids-to-spatial-signatures-to-land-registry" class="level2">
+<h2 class="anchored" data-anchor-id="join-postcode-centroids-to-spatial-signatures-to-land-registry">Join Postcode centroids to Spatial Signatures to Land Registry</h2>
+<p>We replicate the approach above to join the centroid of each postcode to the spatial signature where they are located. For this, we first read into RAM both tables, postcode centroids and signature polygons:</p>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>pc <span class="op">=</span> geopandas.read_parquet(pc_p)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>ss <span class="op">=</span> geopandas.read_parquet(ss_p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 630 ms, sys: 211 ms, total: 841 ms
+Wall time: 742 ms</code></pre>
+</div>
+</div>
+<p>Then we move them to the GPU:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>pc_gpu <span class="op">=</span> cuspatial.from_geopandas(pc)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>ss_gpu <span class="op">=</span> cuspatial.from_geopandas(ss)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 11.1 s, sys: 516 ms, total: 11.6 s
+Wall time: 11.6 s</code></pre>
+</div>
+</div>
+<p>And we are ready to perform the GPU-backed spatial join. In this case, the dataset fits into the GPU all at once, so the code is greatly simplified:</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>pc_ss <span class="op">=</span> sjoin_gpu(</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    pc_gpu, ss_gpu, pts_cols<span class="op">=</span>[<span class="st">'PCD'</span>, <span class="st">'lr_upc'</span>], poly_cols<span class="op">=</span>[<span class="st">'id'</span>, <span class="st">'type'</span>]</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/opt/conda/envs/rapids/lib/python3.9/site-packages/cuspatial/core/spatial/indexing.py:193: UserWarning: scale 5 is less than required minimum scale 9345.561538461538. Clamping to minimum scale
+  warnings.warn(
+/opt/conda/envs/rapids/lib/python3.9/site-packages/cuspatial/core/spatial/join.py:171: UserWarning: scale 5 is less than required minimum scale 9345.561538461538. Clamping to minimum scale
+  warnings.warn(</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 1min 6s, sys: 104 ms, total: 1min 6s
+Wall time: 1min 6s</code></pre>
+</div>
+</div>
+<p>Now we can bring back the table we prepared <a href="./data_acquisition.html#land-registry-price-paid">earlier</a>, attach signature types to each Land Registry sale, and write back to disk:</p>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    pandas.read_parquet(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">'/rapids/notebooks/data/tmp/sales_by_month_pc.pq'</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    .join(</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>        pc_ss.to_pandas()[[<span class="st">'lr_upc'</span>, <span class="st">'id'</span>, <span class="st">'type'</span>]].set_index(<span class="st">'lr_upc'</span>),</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>        on<span class="op">=</span><span class="st">'postcode'</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    .dropna()</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>).to_parquet(<span class="st">'/rapids/notebooks/data/tmp/sales_by_month_pc_ss.pq'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="method-documentation" class="level2 page-columns page-full">
@@ -355,7 +416,7 @@ Wall time: 3min 49s</code></pre>
 <div class="no-row-height column-margin column-container"><div class="">
 <p>You can download the file with the function <a href="tools.py">here</a>.</p>
 </div></div><div class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>sjoin_gpu?</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>sjoin_gpu?</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <pre><code>[0;31mSignature:[0m
 [0msjoin_gpu[0m[0;34m([0m[0;34m[0m

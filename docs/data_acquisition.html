@@ -115,6 +115,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-submit-button-title": "Submit"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 <link rel="stylesheet" href="styles.css">
@@ -143,6 +146,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li class="nav-item">
     <a class="nav-link" href="./gpu_spatial_join.html">Spatial Join</a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./analysis.html">Analysis</a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html">About</a>
+  </li>  
 </ul>
               <div id="quarto-search" class="" title="Search"></div>
           </div> <!-- /navcollapse -->
@@ -164,6 +173,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#uprn-coords" id="toc-uprn-coords" class="nav-link" data-scroll-target="#uprn-coords">UPRN coords</a></li>
   <li><a href="#merge-uprn-epc" id="toc-merge-uprn-epc" class="nav-link" data-scroll-target="#merge-uprn-epc">Merge UPRN-EPC</a></li>
   <li><a href="#spatial-signatures" id="toc-spatial-signatures" class="nav-link" data-scroll-target="#spatial-signatures">Spatial Signatures</a></li>
+  <li><a href="#land-registry-price-paid" id="toc-land-registry-price-paid" class="nav-link" data-scroll-target="#land-registry-price-paid">Land Registry Price Paid</a></li>
+  <li><a href="#postcode-centroids" id="toc-postcode-centroids" class="nav-link" data-scroll-target="#postcode-centroids">Postcode centroids</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -185,7 +196,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>uprn_p <span class="op">=</span> <span class="st">'/home/jovyan/data/uk_os_openuprn/osopenuprn_202210.gpkg'</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>epc_p <span class="op">=</span> <span class="st">'/home/jovyan/data/uk_epc_certificates/'</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>ss_p <span class="op">=</span> <span class="st">'/home/jovyan/data/tmp/spatial_signatures_GB.gpkg'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>ss_p <span class="op">=</span> <span class="st">'/home/jovyan/data/tmp/spatial_signatures_GB.gpkg'</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>pp_p <span class="op">=</span> <span class="st">'/home/jovyan/data/tmp/pp-complete.csv'</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>pc_p <span class="op">=</span> <span class="st">'/home/jovyan/data/tmp/postcodes.csv'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>ERROR 1: PROJ: proj_create_from_database: Open of /opt/conda/share/proj failed</code></pre>
 </div>
@@ -198,28 +211,32 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> warnings.catch_warnings():</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    warnings.filterwarnings(<span class="st">"ignore"</span>)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    client <span class="op">=</span> Client(LocalCluster(n_workers<span class="op">=</span><span class="dv">16</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>2022-12-26 23:23:47,774 - distributed.diskutils - INFO - Found stale lock file and directory '/home/jovyan/work/code/epc_capsule/dask-worker-space/worker-c4ai1jjk', purging
+2022-12-26 23:23:47,775 - distributed.diskutils - INFO - Found stale lock file and directory '/home/jovyan/work/code/epc_capsule/dask-worker-space/worker-yg_m_jqk', purging</code></pre>
+</div>
 </div>
 <section id="epc-certificates" class="level2">
 <h2 class="anchored" data-anchor-id="epc-certificates">EPC certificates</h2>
 <p>These need to be downloaded manually from the official website (<a href="https://epc.opendatacommunities.org/">https://epc.opendatacommunities.org/</a>). Once unzipped, it is a collection of <code>.csv</code> files that can be processed efficiently with Dask. Here we specify the computation lazily:</p>
 <div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dtypes <span class="op">=</span> {</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>   <span class="st">'CONSTRUCTION_AGE_BAND'</span>: <span class="st">'str'</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>   <span class="st">'UPRN'</span>: <span class="st">'str'</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>   <span class="st">'LMK_KEY'</span>: <span class="st">'str'</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>certs_all <span class="op">=</span> ddf.read_csv(</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'</span><span class="sc">{</span>epc_p<span class="sc">}</span><span class="ss">*/certificates.csv'</span>, </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    dtype<span class="op">=</span>dtypes,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    usecols<span class="op">=</span>dtypes</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dtypes <span class="op">=</span> {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>   <span class="st">'CONSTRUCTION_AGE_BAND'</span>: <span class="st">'str'</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>   <span class="st">'UPRN'</span>: <span class="st">'str'</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>   <span class="st">'LMK_KEY'</span>: <span class="st">'str'</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>certs_all <span class="op">=</span> ddf.read_csv(</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f'</span><span class="sc">{</span>epc_p<span class="sc">}</span><span class="ss">*/certificates.csv'</span>, </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    dtype<span class="op">=</span>dtypes,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    usecols<span class="op">=</span>dtypes</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And execute it on the Dask cluster, local in this case, to load them in RAM (NOTE: this will take a significant amount of RAM on your machine). Note that we drop rows with <code>N/A</code> values in either of the three columns as we need observations with the three valid.</p>
 <div class="cell" data-tags="[]" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> warnings.catch_warnings():</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    warnings.filterwarnings(<span class="st">"ignore"</span>)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    certs <span class="op">=</span> certs_all.dropna().compute()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> warnings.catch_warnings():</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    warnings.filterwarnings(<span class="st">"ignore"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    certs <span class="op">=</span> certs_all.dropna().compute()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 12.4 s, sys: 3.1 s, total: 15.5 s
 Wall time: 38.6 s</code></pre>
@@ -233,13 +250,13 @@ Wall time: 38.6 s</code></pre>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <p>The approach using <code>pyogrio</code> seems to beat a multi-core implementation with <code>dask-geopandas</code>, possibly because the latter relies on <code>geopandas.read_file</code>, even though it spreads the computation it across cores. In case of interest, here’s the code:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>uprn <span class="op">=</span> dask_geopandas.read_file(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    uprn_p, npartitions<span class="op">=</span><span class="dv">16</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>).compute()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>uprn <span class="op">=</span> dask_geopandas.read_file(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    uprn_p, npartitions<span class="op">=</span><span class="dv">16</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>).compute()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div><div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>uprn <span class="op">=</span> read_dataframe(uprn_p, columns<span class="op">=</span>[<span class="st">'UPRN'</span>, <span class="st">'geometry'</span>])</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>uprn[<span class="st">'UPRN'</span>] <span class="op">=</span> uprn[<span class="st">'UPRN'</span>].astype(<span class="bu">str</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>uprn <span class="op">=</span> read_dataframe(uprn_p, columns<span class="op">=</span>[<span class="st">'UPRN'</span>, <span class="st">'geometry'</span>])</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>uprn[<span class="st">'UPRN'</span>] <span class="op">=</span> uprn[<span class="st">'UPRN'</span>].astype(<span class="bu">str</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 56.1 s, sys: 8.79 s, total: 1min 4s
 Wall time: 1min 10s</code></pre>
@@ -250,12 +267,12 @@ Wall time: 1min 10s</code></pre>
 <h2 class="anchored" data-anchor-id="merge-uprn-epc">Merge UPRN-EPC</h2>
 <p>With both tables ready in memory, we merge them so that we attach point geometries to all the EPC certificate points through their UPRNs.</p>
 <div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>db <span class="op">=</span> geopandas.GeoDataFrame(</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    certs.merge(</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        uprn, left_on<span class="op">=</span><span class="st">'UPRN'</span>, right_on<span class="op">=</span><span class="st">'UPRN'</span>, how<span class="op">=</span><span class="st">'left'</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    ), crs<span class="op">=</span>uprn.crs</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>db <span class="op">=</span> geopandas.GeoDataFrame(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    certs.merge(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        uprn, left_on<span class="op">=</span><span class="st">'UPRN'</span>, right_on<span class="op">=</span><span class="st">'UPRN'</span>, how<span class="op">=</span><span class="st">'left'</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    ), crs<span class="op">=</span>uprn.crs</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 40.9 s, sys: 3.58 s, total: 44.4 s
 Wall time: 43.4 s</code></pre>
@@ -263,7 +280,7 @@ Wall time: 43.4 s</code></pre>
 </div>
 <p>After the merge, we write the table to disk so it can be loaded later on for the spatial join:</p>
 <div class="cell" data-tags="[]" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>db.to_parquet(<span class="st">'/home/jovyan/data/tmp/epc_uprn.pq'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>db.to_parquet(<span class="st">'/home/jovyan/data/tmp/epc_uprn.pq'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>/tmp/ipykernel_3312797/3783868997.py:1: UserWarning: this is an initial implementation of Parquet/Feather file support and associated metadata.  This is tracking version 0.1.0 of the metadata specification at https://github.com/geopandas/geo-arrow-spec
 
@@ -279,8 +296,8 @@ import warnings; warnings.filterwarnings('ignore', message='.*initial implementa
 <h2 class="anchored" data-anchor-id="spatial-signatures">Spatial Signatures</h2>
 <p>For the Spatial Signature boundaries, we rely on the official open data product. This can be downloaded programmatically from its <a href="https://figshare.com/articles/dataset/Geographical_Characterisation_of_British_Urban_Form_and_Function_using_the_Spatial_Signatures_Framework/16691575/1">Figshare location</a>. You can download it directly with:</p>
 <div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> rm <span class="op">-</span>f $ss_p <span class="co"># Remove if exsisting</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> wget <span class="op">-</span>O $ss_p https:<span class="op">//</span>figshare.com<span class="op">/</span>ndownloader<span class="op">/</span>files<span class="op">/</span><span class="dv">30904861</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> rm <span class="op">-</span>f $ss_p <span class="co"># Remove if exsisting</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> wget <span class="op">-</span>O $ss_p https:<span class="op">//</span>figshare.com<span class="op">/</span>ndownloader<span class="op">/</span>files<span class="op">/</span><span class="dv">30904861</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>--2022-12-21 17:30:16--  https://figshare.com/ndownloader/files/30904861
 Resolving figshare.com (figshare.com)... 54.194.88.49, 52.17.229.77, 2a05:d018:1f4:d003:376b:de5c:3a42:a610, ...
@@ -301,8 +318,8 @@ Saving to: ‘/home/jovyan/data/tmp/spatial_signatures_GB.gpkg’
 </div>
 </div>
 <div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ss <span class="op">=</span> read_dataframe(ss_p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>ss <span class="op">=</span> read_dataframe(ss_p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 1.46 s, sys: 794 ms, total: 2.26 s
 Wall time: 2.24 s</code></pre>
@@ -310,8 +327,8 @@ Wall time: 2.24 s</code></pre>
 </div>
 <p>This is very detailed, which makes things much slower to run, so we simplify first:</p>
 <div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>sss <span class="op">=</span> ss.simplify(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>sss <span class="op">=</span> ss.simplify(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>CPU times: user 1min 17s, sys: 1.04 s, total: 1min 19s
 Wall time: 1min 10s</code></pre>
@@ -319,7 +336,7 @@ Wall time: 1min 10s</code></pre>
 </div>
 <p>Now we can write to disk a Parquet table with the simplified geometries for consumption later in the GPU:</p>
 <div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ss.assign(geometry<span class="op">=</span>sss).to_parquet(<span class="st">'/home/jovyan/data/tmp/sss.pq'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>ss.assign(geometry<span class="op">=</span>sss).to_parquet(<span class="st">'/home/jovyan/data/tmp/sss.pq'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>/tmp/ipykernel_3312797/4276883947.py:1: UserWarning: this is an initial implementation of Parquet/Feather file support and associated metadata.  This is tracking version 0.1.0 of the metadata specification at https://github.com/geopandas/geo-arrow-spec
 
@@ -328,6 +345,238 @@ This metadata specification does not yet make stability promises.  We do not yet
 To further ignore this warning, you can do: 
 import warnings; warnings.filterwarnings('ignore', message='.*initial implementation of Parquet.*')
   ss.assign(geometry=sss).to_parquet('/home/jovyan/data/tmp/sss.pq')</code></pre>
+</div>
+</div>
+</section>
+<section id="land-registry-price-paid" class="level2">
+<h2 class="anchored" data-anchor-id="land-registry-price-paid">Land Registry Price Paid</h2>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> wget <span class="op">\</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    http:<span class="op">//</span>prod.publicdata.landregistry.gov.uk.s3<span class="op">-</span>website<span class="op">-</span>eu<span class="op">-</span>west<span class="op">-</span><span class="fl">1.</span><span class="er">amazonaws</span>.com<span class="op">/</span>pp<span class="op">-</span>complete.csv <span class="op">\</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">-</span>O $pp_p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>--2022-12-23 11:48:14--  http://prod.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com/pp-complete.csv
+Resolving prod.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com (prod.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com)... 52.218.118.28, 52.218.120.108, 52.218.120.212, ...
+Connecting to prod.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com (prod.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com)|52.218.118.28|:80... connected.
+HTTP request sent, awaiting response... 301 Moved Permanently
+Location: http://prod1.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com/pp-complete.csv [following]
+--2022-12-23 11:48:14--  http://prod1.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com/pp-complete.csv
+Resolving prod1.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com (prod1.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com)... 52.218.120.108, 52.218.120.212, 52.92.19.172, ...
+Reusing existing connection to prod.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com:80.
+HTTP request sent, awaiting response... 200 OK
+Length: 4849144007 (4.5G) [text/csv]
+Saving to: ‘/home/jovyan/data/tmp/pp-complete.csv’
+
+/home/jovyan/data/t 100%[===================&gt;]   4.52G  30.3MB/s    in 1m 47s  
+
+2022-12-23 11:50:02 (43.1 MB/s) - ‘/home/jovyan/data/tmp/pp-complete.csv’ saved [4849144007/4849144007]
+</code></pre>
+</div>
+</div>
+<p>Following the <a href="https://www.gov.uk/guidance/about-the-price-paid-data#explanations-of-column-headers-in-the-ppd">official documentation</a>, the column names are:</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>col_names <span class="op">=</span> [</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'tid'</span>,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'price'</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'date_of_transfer'</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'postcode'</span>,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'property_type'</span>,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'new_build'</span>,</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'duration'</span>,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'PAON'</span>,</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'SAON'</span>,</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'street'</span>,</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'locality'</span>,</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'town_city'</span>,</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>    <span class="st">'district'</span>,</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>    <span class="st">'county'</span>,</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>    <span class="st">'ppd_cat_type'</span>,</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>    <span class="st">'rec_status'</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We only read a subset of those:</p>
+<div class="cell" data-tags="[]" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>pp <span class="op">=</span> ddf.read_csv(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>    pp_p, </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    names<span class="op">=</span>col_names,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    usecols<span class="op">=</span>[<span class="st">'tid'</span>, <span class="st">'date_of_transfer'</span>, <span class="st">'postcode'</span>, <span class="st">'new_build'</span>],</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    parse_dates<span class="op">=</span>[<span class="st">'date_of_transfer'</span>]</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>).compute()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 9.32 s, sys: 3.14 s, total: 12.5 s
+Wall time: 21.9 s</code></pre>
+</div>
+</div>
+<p>For the analysis, we will need counts by month by postcode. We can calculate these already and save space:</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>sales <span class="op">=</span> (</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    pp</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    .assign(moy<span class="op">=</span>pp[<span class="st">'date_of_transfer'</span>].dt.to_period(<span class="st">'M'</span>))</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    .query(<span class="st">'new_build == "Y"'</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    .groupby([<span class="st">'moy'</span>, <span class="st">'postcode'</span>])</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    .size()</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>    .reset_index()</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    .rename(columns<span class="op">=</span>{<span class="dv">0</span>: <span class="st">'new_sales'</span>})</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 6.26 s, sys: 769 ms, total: 7.03 s
+Wall time: 6.86 s</code></pre>
+</div>
+</div>
+<p>We write the table as we will need it later on in the <a href="./analysis.html">analysis</a>, once it’s joined to the spatial signatures:</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>sales.to_parquet(<span class="st">'/home/jovyan/data/tmp/sales_by_month_pc.pq'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="postcode-centroids" class="level2">
+<h2 class="anchored" data-anchor-id="postcode-centroids">Postcode centroids</h2>
+<p>Postcode locations (centroids) come from the <a href="https://geoportal.statistics.gov.uk/datasets/ons::onspd-online-latest-centroids/explore?location=55.200148%2C-3.307439%2C6.80">ONSPD</a> database:</p>
+<div class="cell" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> wget <span class="op">\</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    https:<span class="op">//</span>geoportal.statistics.gov.uk<span class="op">/</span>datasets<span class="op">/</span><span class="fl">2e65</span><span class="er">b9933cd9483b8724760f27968a48_0</span>.csv <span class="op">\</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">-</span>O $pc_p</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>--2022-12-23 14:41:43--  https://geoportal.statistics.gov.uk/datasets/2e65b9933cd9483b8724760f27968a48_0.csv
+Resolving geoportal.statistics.gov.uk (geoportal.statistics.gov.uk)... 44.207.123.71, 3.219.120.199, 34.193.115.202
+Connecting to geoportal.statistics.gov.uk (geoportal.statistics.gov.uk)|44.207.123.71|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/csv]
+Saving to: ‘/home/jovyan/data/tmp/postcodes.csv’
+
+/home/jovyan/data/t     [   &lt;=&gt;              ]   1.10G  15.1MB/s    in 50s     
+
+2022-12-23 14:42:33 (22.6 MB/s) - ‘/home/jovyan/data/tmp/postcodes.csv’ saved [1186245382]
+</code></pre>
+</div>
+</div>
+<p>We read in parallel only the columns we need and drop rows with any missing value as we need postcodes for which we have the three features (i.e., IDs and location coordinates):</p>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>time</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>pcs <span class="op">=</span> ddf.read_csv(</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    pc_p,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    usecols<span class="op">=</span>[<span class="st">'PCD'</span>, <span class="st">'OSEAST1M'</span>, <span class="st">'OSNRTH1M'</span>],</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    assume_missing<span class="op">=</span><span class="va">True</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>).dropna().compute()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: user 535 ms, sys: 130 ms, total: 665 ms
+Wall time: 1.83 s</code></pre>
+</div>
+</div>
+<p>We generate the point geometries:</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>xys <span class="op">=</span> geopandas.points_from_xy(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    pcs[<span class="st">'OSEAST1M'</span>], pcs[<span class="st">'OSNRTH1M'</span>]</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can now build the geo-table with the point geometries of all available postcodes:</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>pc_pts <span class="op">=</span> (</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    geopandas.GeoDataFrame(</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>        pcs[[<span class="st">'PCD'</span>]], geometry<span class="op">=</span>xys</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    ).set_crs(epsg<span class="op">=</span><span class="dv">27700</span>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The ONSPD appears to contain postcodes expressed with a space in between and without:</p>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>pc_pts[pc_pts[<span class="st">'PCD'</span>].<span class="bu">str</span>.contains(<span class="st">' '</span>)].head(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="10">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>PCD</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>AB1 0AA</td>
+      <td>POINT (385386.000 801193.000)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>pc_pts[<span class="op">~</span>pc_pts[<span class="st">'PCD'</span>].<span class="bu">str</span>.contains(<span class="st">' '</span>)].head(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>PCD</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>2655</th>
+      <td>AB101AA</td>
+      <td>POINT (394251.000 806376.000)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>While the postcodes in the Land Registry all are expressed with a space (with the exception of an <code>UNKNOWN</code> instance):</p>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>lr_upcs <span class="op">=</span> pandas.Series(sales[<span class="st">'postcode'</span>].unique())</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>lr_upcs[<span class="op">~</span>lr_upcs.<span class="bu">str</span>.contains(<span class="st">' '</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>201210    UNKNOWN
+dtype: object</code></pre>
+</div>
+</div>
+<p>To connect the two tables, we join them only after removing spaces in both sets of postcodes (which finds a geometry for the vast majority of postcodes):</p>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>j <span class="op">=</span> geopandas.GeoDataFrame(</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>    pandas.DataFrame(</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>        {<span class="st">'lr_upc'</span>: lr_upcs, <span class="st">'jlr_upc'</span>: lr_upcs.<span class="bu">str</span>.replace(<span class="st">' '</span>, <span class="st">''</span>)}</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>    .join(</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>        pc_pts.assign(jPCD<span class="op">=</span>pc_pts[<span class="st">'PCD'</span>].<span class="bu">str</span>.replace(<span class="st">' '</span>, <span class="st">''</span>)).set_index(<span class="st">'jPCD'</span>), </span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>        on<span class="op">=</span><span class="st">'jlr_upc'</span>,</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>        how<span class="op">=</span><span class="st">'left'</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>    .drop(columns<span class="op">=</span>[<span class="st">'jlr_upc'</span>])</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>).set_crs(pc_pts.crs)</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>j.info()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'geopandas.geodataframe.GeoDataFrame'&gt;
+RangeIndex: 284126 entries, 0 to 284125
+Data columns (total 3 columns):
+ #   Column    Non-Null Count   Dtype   
+---  ------    --------------   -----   
+ 0   lr_upc    284126 non-null  object  
+ 1   PCD       283932 non-null  object  
+ 2   geometry  283932 non-null  geometry
+dtypes: geometry(1), object(2)
+memory usage: 6.5+ MB</code></pre>
+</div>
+</div>
+<p>We write this to disk to be able to join it to spatial signature types <a href="./gpu_spatial_join.html">on a GPU</a>:</p>
+<div class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>j.to_parquet(<span class="st">'/home/jovyan/data/tmp/postcode_pts.pq'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_3543616/936528254.py:1: UserWarning: this is an initial implementation of Parquet/Feather file support and associated metadata.  This is tracking version 0.1.0 of the metadata specification at https://github.com/geopandas/geo-arrow-spec
+
+This metadata specification does not yet make stability promises.  We do not yet recommend using this in a production setting unless you are able to rewrite your Parquet/Feather files.
+
+To further ignore this warning, you can do: 
+import warnings; warnings.filterwarnings('ignore', message='.*initial implementation of Parquet.*')
+  j.to_parquet('/home/jovyan/data/tmp/postcode_pts.pq')</code></pre>
 </div>
 </div>
 
