@@ -6,6 +6,7 @@ format:
     theme: journal
     css: styles.css
     code-fold: true
+    fig-responsive: true
   pdf:
     execute:
       echo: false
