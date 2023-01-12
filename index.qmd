@@ -1,6 +1,7 @@
 ---
 title: Urban Grammar - Age Capsule
 subtitle: Linking building age with their Spatial Signature
+author: Dani Arribas-Bel
 format:
   html:
     theme: journal
@@ -24,7 +25,9 @@ jupyter:
     name: python3
 ---
 
-### TL;DR
+[`[PDF]`](https://urbangrammarai.xyz/age_capsule/index.pdf)
+
+### TL;DR 
 
 @ARRIBASBEL2022102641 and @fleischmann2022geographical.
 
