@@ -29,8 +29,6 @@ jupyter:
 
 ### TL;DR 
 
-@ARRIBASBEL2022102641 and @fleischmann2022geographical.
-
 ```{python}
 import pandas
 import seaborn as sns
@@ -82,6 +80,18 @@ lr = pandas.read_csv(
 ```
 
 ### Introduction
+
+This capsule considers the temporal dimension of the Spatial Signatures [@fleischmann2022geographical]. It is a start to unpacking how the development of different signature type has unfolded over time. Hence, we try to answer questions such as *when did most of the development that lead to dense, compact neighborhoods took place?* or *what has been the main spatial signature of the last decades which has most recently been shaping the landscape?*
+
+The analysis presented here relies on three datasets. First, the Spatial Signature characterisation proposed by @fleischmann2022geographical for Great Britain and based on the approach outlined in @ARRIBASBEL2022102641.
+Second, data on Energy Performance Certificates (EPC), released by the Department of Levelling Up, Housing and Communities.[^1] This is a registry of all the properties in England and Wales that have received an Energy score. As part of the process, much more information is collected, including the period in which the property was built on, which is what we use here.
+And third, we use Land Registry's Price Paid data[^2], which records almost every[^3] house transaction in England and Wales since 1995.
+
+[^1]: Available at: [https://epc.opendatacommunities.org/](https://epc.opendatacommunities.org/)
+[^2]: More information available at: [https://www.gov.uk/government/collections/price-paid-data](https://www.gov.uk/government/collections/price-paid-data)
+[^3]: There are some exceptions. For more detail, please see: [https://www.gov.uk/guidance/about-the-price-paid-data#data-excluded-from-price-paid-data](https://www.gov.uk/guidance/about-the-price-paid-data#data-excluded-from-price-paid-data) 
+
+The remainder of the document is structured in three sections: we first consider the overall distribution of properties across signatures; then we move on to evolution over the XXth Century evolution; and wrap up with a detailed zoom into the last two decades in the XXIst Century.
 
 ### Building properties across signatures
 
