@@ -96,16 +96,45 @@ lr = pandas.read_csv(
 
 ### Building properties across signatures
 
+As a first step, we consider how prevalent different development patterns, or
+_spatial signatures_, are. To do that, @fig-epc-by-sig shows the proportion of
+EPC properties located within each signature type, sorted by their degree of
+"urbanity", with the most urban signature ("Hyper concentrated urbanity") at
+the top, and the least ("Wild countryside") at the bottom. Starting with this
+figure is useful because the exercise below will essentially unfold its
+temporal dimension to consider how this has been built over time.
+
 ```{python}
 #| fig-cap-location: margin
 #| reference-location: margin
+#| label: fig-epc-by-sig
 #| fig-cap: Proportion of EPC properties by signature type
-#| label: epc-by-sig
 ax = epc.sum(axis=0)[::-1].plot.barh(figsize=(4, 4), color=ugg.HEX[2])
 ax.set_xticks([])
 ax.tick_params(left=False)
 ax.set_frame_on(False)
 ```
+
+There are three important aspects to highlight from this figure.
+First,
+although conceptually very important for urban life, very few of the
+properties are in what we consider "urbanity", possibly with the exception of
+the local variation, which is common in most cities and towns. Regional,
+metropolitan, and (hyper) concentrated are only present in a minority of
+cities and thus, in the broader context, are not very relevant.
+Second,
+we can observe two peaks of signatures that group two distinct types of
+development. One around more compact neighborhoods, with "Dense residential
+neighborhoods" as its most common type, and another one on more suburban
+development with "Open sprawl" and "Urban buffer" as the most common
+signatures in the entire set. This has important implications when we are
+trying to understand in what context most housing properties are located,
+pointint towards one with lower density and less connected structure.
+Third,
+despite being the most prominent area-wise, "Countryside agriculture" and
+"Wild countryside" have very few properties. This is less counterintuitive
+than it first appears when one considers the main characteristics of these
+signatures are being home to functions that do not imply human residences.
 
 ### The long view
 
