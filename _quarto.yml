@@ -9,7 +9,7 @@ project:
 bibliography: references.bib
 
 website:
-  title: "EPC Capsule"
+  title: "Age Capsule"
   navbar:
     background: primary
     left:
@@ -27,5 +27,3 @@ format:
     theme: journal
     css: styles.css
     toc: true
-
-

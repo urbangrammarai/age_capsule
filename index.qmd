@@ -1,3 +1,354 @@
-# Linking building age with Spatial Signatures
+---
+title: Urban Grammar - Age Capsule
+subtitle: Linking building age with their Spatial Signature
+author: Dani Arribas-Bel
+format:
+  html:
+    theme: journal
+    css: styles.css
+    code-fold: true
+    fig-responsive: true
+  pdf:
+    execute:
+      echo: false
+bibliography: references.bib
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .qmd
+      format_name: quarto
+      format_version: '1.0'
+      jupytext_version: 1.13.8
+  kernelspec:
+    display_name: Python 3 (ipykernel)
+    language: python
+    name: python3
+---
 
-@ARRIBASBEL2022102641 and @fleischmann2022geographical.
+[`[PDF]`](https://urbangrammarai.xyz/age_capsule/index.pdf)
+
+### TL;DR 
+
+
+### Introduction
+
+This capsule considers the temporal dimension of the Spatial Signatures [@fleischmann2022geographical]. It is a start to unpacking how the development of different signature type has unfolded over time. Hence, we try to answer questions such as *when did most of the development that lead to dense, compact neighborhoods took place?* or *what has been the main spatial signature of the last decades which has most recently been shaping the landscape?*
+
+The analysis presented here relies on three datasets. First, the Spatial Signature characterisation proposed by @fleischmann2022geographical for Great Britain and based on the approach outlined in @ARRIBASBEL2022102641.
+Second, data on Energy Performance Certificates (EPC), released by the Department of Levelling Up, Housing and Communities.[^1] This is a registry of all the properties in England and Wales that have received an Energy score. As part of the process, much more information is collected, including the period in which the property was built on, which is what we use here.
+And third, we use Land Registry's Price Paid data[^2], which records almost every[^3] house transaction in England and Wales since 1995.
+
+[^1]: Available at: [https://epc.opendatacommunities.org/](https://epc.opendatacommunities.org/)
+[^2]: More information available at: [https://www.gov.uk/government/collections/price-paid-data](https://www.gov.uk/government/collections/price-paid-data)
+[^3]: There are some exceptions. For more detail, please see: [https://www.gov.uk/guidance/about-the-price-paid-data#data-excluded-from-price-paid-data](https://www.gov.uk/guidance/about-the-price-paid-data#data-excluded-from-price-paid-data) 
+
+The remainder of the document is structured in three sections: we first consider the overall distribution of properties across signatures; then we move on to evolution over the XXth Century evolution; and wrap up with a detailed zoom into the last two decades in the XXIst Century.
+
+```{python}
+import pandas
+import seaborn as sns
+import matplotlib.pyplot as plt
+import urbangrammar_graphics as ugg
+
+type_order = [
+    'Hyper concentrated urbanity', 
+    'Concentrated urbanity',
+    'Metropolitan urbanity', 
+    'Regional urbanity',
+    'Local urbanity',
+    'Dense urban neighbourhoods',
+    'Dense residential neighbourhoods', 
+    'Connected residential neighbourhoods', 
+    'Gridded residential quarters',
+    'Accessible suburbia', 
+    'Disconnected suburbia', 
+    'Open sprawl', 
+    'Warehouse/Park land', 
+    'Urban buffer', 
+    'Countryside agriculture',
+    'Wild countryside'
+][::-1]
+
+epc_age_order = age_order = [
+    'Before 1900', 
+    '1900-1929', 
+    '1930-1949',
+    '1950-1966', 
+    '1967-1975', 
+    '1976-1982', 
+    '1983-1990', 
+    '1991-1995',
+    '1996-2002', 
+    '2003-2006', 
+    '2007 onwards', 
+]
+
+epc = pandas.read_csv(
+    'data/epc_age_by_ss.csv', 
+    index_col='age_remapped',
+    skiprows=[-1]
+)[type_order[::-1]].reindex(epc_age_order)
+epc.index.name = ''
+lr = pandas.read_csv(
+    'data/lr_sales_by_month_ss.csv', index_col='moy'
+)
+```
+
+### Building properties across signatures
+
+As a first step, we consider how prevalent different development patterns, or
+_spatial signatures_, are. To do that, @fig-epc-by-sig shows the proportion of
+EPC properties located within each signature type, sorted by their degree of
+"urbanity", with the most urban signature ("Hyper concentrated urbanity") at
+the top, and the least ("Wild countryside") at the bottom. Starting with this
+figure is useful because the exercise below will essentially unfold its
+temporal dimension to consider how this has been built over time.
+
+```{python}
+#| fig-cap-location: margin
+#| reference-location: margin
+#| label: fig-epc-by-sig
+#| fig-cap: Proportion of EPC properties by signature type
+ax = epc.sum(axis=0)[::-1].plot.barh(figsize=(4, 4), color=ugg.HEX[2])
+ax.set_xticks([])
+ax.tick_params(left=False)
+ax.set_frame_on(False)
+```
+
+There are three important aspects to highlight from this figure.
+First,
+although conceptually very important for urban life, very few of the
+properties are in what we consider "urbanity", possibly with the exception of
+the local variation, which is common in most cities and towns. Regional,
+metropolitan, and (hyper) concentrated are only present in a minority of
+cities and thus, in the broader context, are not very relevant.
+Second,
+we can observe two peaks of signatures that group two distinct types of
+development. One around more compact neighborhoods, with "Dense residential
+neighborhoods" as its most common type, and another one on more suburban
+development with "Open sprawl" and "Urban buffer" as the most common
+signatures in the entire set. This has important implications when we are
+trying to understand in what context most housing properties are located,
+pointint towards one with lower density and less connected structure.
+Third,
+despite being the most prominent area-wise, "Countryside agriculture" and
+"Wild countryside" have very few properties. This is less counterintuitive
+than it first appears when one considers the main characteristics of these
+signatures are being home to functions that do not imply human residences.
+
+### The long view
+
+```{python}
+#| fig-cap-location: bottom
+#| reference-location: bottom
+#| fig-column: page-right
+#| fig-cap: EPC properties by signature type over time periods
+#| label: epc-by-sig-by-time
+f, ax = plt.subplots(1, figsize=(9, 4))
+h = sns.heatmap(
+    epc.T, 
+    cmap=sns.light_palette(ugg.HEX[4], as_cmap=True), 
+    cbar=False, 
+    linewidths=0.01, 
+    linecolor='w',
+    ax=ax
+)
+h.tick_params(left=False, bottom=False)
+h.set_xticklabels(h.get_xticklabels(), rotation = 45, ha="right");
+```
+
+```{python}
+#| fig-cap-location: margin
+#| reference-location: margin
+#| fig-cap: >-
+#|   Proportion of EPC properties by signature type over time periods (rows add up
+#|   to 100%)
+#| label: epc-by-sig-by-time-rs
+tab = epc.reindex(age_order).div(epc.T.sum(axis=1)).T
+
+f, ax = plt.subplots(1, figsize=(7, 4))
+h = sns.heatmap(
+    tab, 
+    cmap=sns.light_palette(ugg.HEX[4], as_cmap=True), 
+    cbar=False, 
+    linewidths=0.01, 
+    linecolor='w',
+    ax=ax
+)
+h.tick_params(left=False, bottom=False)
+h.set_xticklabels(h.get_xticklabels(), rotation = 45, ha="right");
+```
+
+```{python}
+#| fig-cap-location: margin
+#| reference-location: margin
+#| fig-cap: >-
+#|   Proportion of EPC properties by signature type over time periods (columns add
+#|   up to 100%)
+#| label: epc-by-sig-by-time-cs
+tab = (epc.T / epc.T.sum())[age_order]
+
+f, ax = plt.subplots(1, figsize=(7, 4))
+h = sns.heatmap(
+    tab, 
+    cmap=sns.light_palette(ugg.HEX[4], as_cmap=True), 
+    cbar=False, 
+    linewidths=0.01, 
+    linecolor='w',
+    ax=ax
+)
+h.tick_params(left=False, bottom=False)
+h.set_xticklabels(h.get_xticklabels(), rotation = 45, ha="right");
+```
+
+### The last 25 years
+
+```{python}
+#| fig-column: margin
+#| fig-cap: Land Registry new properties
+#| label: lr-ts
+ax = lr.sum(axis=1).plot(
+    figsize=(2, 0.5), linewidth=0.5, color=ugg.HEX[0]
+)
+ax.set_axis_off();
+```
+
+The overall timeline is available.
+
+```{python}
+#| fig-cap-location: bottom
+#| reference-location: bottom
+#| fig-column: page-right
+#| fig-cap: Land Registry new properties by signature type
+#| label: lr-all
+p = lr.plot(
+    figsize=(9, 4), subplots=False, sharex=True, sharey=True, alpha=0.5
+)
+
+handles, labels = plt.gca().get_legend_handles_labels()
+order = pandas.Series(
+    range(len(labels)), index=labels
+)[type_order[::-1]].tolist()
+plt.legend(
+    [handles[idx] for idx in order],[labels[idx] for idx in order],
+    bbox_to_anchor=(1,1), 
+    loc="upper left",
+    frameon=False
+)
+
+p.set_frame_on(False)
+p.set_yticklabels([])
+p.set_yticks([])
+p.set_xlabel('')
+p.tick_params(bottom=False)
+p.set_xticklabels(p.get_xticklabels(), rotation = 45, ha="right");
+```
+
+```{python}
+#| fig-cap-location: bottom
+#| reference-location: bottom
+#| fig-column: page-right
+#| fig-cap: Yearly proportion of Land Registry new properties by signature type
+#| label: lr-all-pct
+p = lr.T.div(lr.T.sum()).T.plot(
+    figsize=(9, 4), subplots=False, sharex=True, sharey=True, alpha=0.5
+)
+
+handles, labels = plt.gca().get_legend_handles_labels()
+order = pandas.Series(
+    range(len(labels)), index=labels
+)[type_order[::-1]].tolist()
+plt.legend(
+    [handles[idx] for idx in order],[labels[idx] for idx in order],
+    bbox_to_anchor=(1,1), 
+    loc="upper left",
+    frameon=False
+)
+
+p.set_frame_on(False)
+p.set_yticklabels([])
+p.set_yticks([])
+p.set_xlabel('')
+p.tick_params(bottom=False)
+p.set_xticklabels(p.get_xticklabels(), rotation = 45, ha="right");
+```
+
+```{python}
+#| fig-cap-location: margin
+#| reference-location: margin
+#| fig-cap: Yearly proportion of Land Registry new properties
+#| label: lr-all-os-ub
+p = (
+    lr.T.div(lr.T.sum()).T
+    [['Open sprawl', 'Urban buffer']]
+    .multiply(100)
+    .plot.line(
+        figsize=(9, 4), color=(ugg.HEX[4], ugg.HEX[3])
+    )
+)
+
+plt.legend(loc="upper left", frameon=False)
+
+p.set_frame_on(False)
+p.tick_params(left = False, bottom=False)
+p.set_ylabel('% of new builds in signature')
+p.set_xlabel('')
+p.set_xticklabels(p.get_xticklabels(), rotation = 45, ha="right");
+```
+
+```{python}
+#| fig-cap-location: margin
+#| reference-location: margin
+#| fig-cap: Yearly proportion of Land Registry new properties
+#| label: lr-all-urbanities
+p = (
+    lr.T.div(lr.T.sum()).T
+    [[i for i in lr.columns if ('urbanity' in i.lower())]]
+    .multiply(100)
+    .plot.line(
+        figsize=(9, 4), color=ugg.HEX[:5], 
+    )
+)
+
+p.set_frame_on(False)
+p.tick_params(left = False, bottom=False)
+p.set_ylabel('% of new builds in signature')
+p.set_xlabel('')
+p.legend(frameon=False)
+p.set_xticklabels(p.get_xticklabels(), rotation = 45, ha="right");
+```
+
+```{python}
+#| fig-cap-location: margin
+#| reference-location: margin
+#| fig-cap: Yearly proportion of Land Registry new properties
+#| label: lr-all-neis
+types = (
+    [i for i in lr.columns if 'neighbourhoods' in i.lower()] + 
+    ['Gridded residential quarters'] +
+    [i for i in lr.columns if 'suburbia' in i.lower()]
+)
+ps = (
+    lr.T.div(lr.T.sum()).T
+    [types]
+    .multiply(100)
+    .iloc[:-1, :]
+    .plot.line(
+        figsize=(6, 4), color=ugg.HEX, subplots=True, rot=45
+    )
+)
+
+for p in ps:
+
+    p.set_frame_on(False)
+    p.tick_params(left = False, bottom=False)
+    p.set_yticks([])
+    p.set_xlabel('')
+    p.legend(
+        loc="upper left",
+        bbox_to_anchor=(1,1), 
+        frameon=False
+    );
+```
+
+# References
