@@ -138,12 +138,22 @@ signatures are being home to functions that do not imply human residences.
 
 ### The long view
 
+The first approach to unfolding the temporal dimension of @fig-epc-by-sig takes
+a long-term view. We use the age column in the EPC dataset and re-aggregate it in
+periods of, roughly, 15 to 20 years. @fig-epc-by-sig-by-time displays a heatmap with
+the number of properties built in each period and located in areas of each signature.
+This first crude overview already provides interesting insight. The highest concentration
+of properties corresponds with houses built in the immediate post-war years
+(ca. 1950-75) in locations labelled as Accessible suburbia, Open sprawl, and
+Urban buffer. This trend represents the suburbanisation that occurred shortly
+after WW-II and that still characterises today's housing stock.
+
 ```{python}
 #| fig-cap-location: bottom
 #| reference-location: bottom
 #| fig-column: page-right
 #| fig-cap: EPC properties by signature type over time periods
-#| label: epc-by-sig-by-time
+#| label: fig-epc-by-sig-by-time
 f, ax = plt.subplots(1, figsize=(9, 4))
 h = sns.heatmap(
     epc.T, 
@@ -157,13 +167,27 @@ h.tick_params(left=False, bottom=False)
 h.set_xticklabels(h.get_xticklabels(), rotation = 45, ha="right");
 ```
 
+@fig-epc-by-sig-by-time-rs makes the absolute view in @fig-epc-by-sig-by-time relative
+to each spatial signature. The heatmap is constructed so that it represents
+the proportion of all the houses in a signature type that correspond to each
+time period. This transformation allows us to see more detail in signatures
+that had too small counts to be picked up visually in the previous figure. Of
+particular interest are all the "urbanity" classes, which represent the town
+centres and most urban cores of British cities. In almost all cases, these are
+the oldest areas as they represent the kernel where the city or town was
+originally founded. In almost all cases too (with the exception, for example,
+of cities that were heavily bombed during WW-II), they are all made up of
+older stock that has been gradually upgraded rather than replaced. This is
+what is represented in @fig-epc-by-sig-by-time-rs by the darker yellow (higher
+values) in its top left corner. The figure also makes clear that, even
+signature by signature, most of the housing stock in Britain was built before
+1975.
+
 ```{python}
 #| fig-cap-location: margin
 #| reference-location: margin
-#| fig-cap: >-
-#|   Proportion of EPC properties by signature type over time periods (rows add up
-#|   to 100%)
-#| label: epc-by-sig-by-time-rs
+#| fig-cap: Proportion of EPC properties by signature type over time periods (rows add up to 100%)
+#| label: fig-epc-by-sig-by-time-rs
 tab = epc.reindex(age_order).div(epc.T.sum(axis=1)).T
 
 f, ax = plt.subplots(1, figsize=(7, 4))
@@ -179,13 +203,27 @@ h.tick_params(left=False, bottom=False)
 h.set_xticklabels(h.get_xticklabels(), rotation = 45, ha="right");
 ```
 
+Our final look at the period in which the building stock was built considers
+another relative view, but this time by period. @fig-epc-by-sig-by-time-cs
+represents the proportion of all houses built in a given period that is
+located in an area with a particular spatial signature. Here we come back to
+the patterns we initially saw in @fig-epc-by-sig, but this time we can see
+more detail on the relevance of each period for signatures (which was obscured
+before by the high numbers for some periods). The focus here thus is back on
+the more suburban signatures (Open sprawl, Urban buffer) but we can now see
+how the relevance of those types actually grows over time. Before, we
+established that the peak period was 1950-1975. This is when the vast majority
+of the current stock was built, and it was developed following suburban
+patterns. What this figure makes clear is that the suburban nature of
+development actually grew over time well into our present day. Even though the
+total number of new houses built in Britain since 1975 was not as high as
+before, the proportion of them that were in suburban areas has steadily grown.
+
 ```{python}
 #| fig-cap-location: margin
 #| reference-location: margin
-#| fig-cap: >-
-#|   Proportion of EPC properties by signature type over time periods (columns add
-#|   up to 100%)
-#| label: epc-by-sig-by-time-cs
+#| fig-cap: Proportion of EPC properties by signature type over time periods (columns add up to 100%)
+#| label: fig-epc-by-sig-by-time-cs
 tab = (epc.T / epc.T.sum())[age_order]
 
 f, ax = plt.subplots(1, figsize=(7, 4))
